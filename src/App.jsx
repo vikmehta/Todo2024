@@ -1,21 +1,46 @@
 import { useState, useEffect } from 'react'
 import { nanoid } from 'nanoid'
+import Confetti from 'react-confetti'
 import TodoList from './components/TodoList'
 import { todos } from './data/data'
 import AppHeader from './components/AppHeader'
 import Footer from './components/Footer'
 import Modal from './components/Modal'
 import AddTask from './components/AddTask'
+import sound from './data/applause.mp3'
 
 const App = () => {
 	const [tasks, setTasks] = useState([])
 	const [showModal, setShowModal] = useState(false)
 	const [textInput, setTextInput] = useState('')
 	const [inputChecked, setInputChecked] = useState(false)
+	const [showConfetti, setShowConfetti] = useState(false)
+
+	const play = () => {
+		new Audio(sound).play()
+	}
 
 	useEffect(() => {
 		setTasks(todos)
 	}, [])
+
+	useEffect(() => {
+		const totalTasks = tasks.length || 0
+		const completedTasks = Array.isArray(tasks) ? tasks.filter((item) => item.completed) : []
+		const totalCompletedTasks = completedTasks.length || 0
+		if (totalTasks > 0 && totalTasks === totalCompletedTasks) {
+			play()
+			setShowConfetti(true)
+		}
+	}, [tasks])
+
+	useEffect(() => {
+		if (showConfetti) {
+			setTimeout(() => {
+				setShowConfetti(false)
+			}, 8000)
+		}
+	}, [showConfetti])
 
 	const totalTasks = tasks.length || 0
 	const completedTasks = Array.isArray(tasks) ? tasks.filter((item) => item.completed) : []
@@ -61,6 +86,7 @@ const App = () => {
 	return (
 		<div className='max-w-lg m-auto flex flex-col min-h-screen pt-28'>
 			<AppHeader percent={percent} />
+			{showConfetti && <Confetti />}
 			<TodoList
 				tasks={tasks}
 				markComplete={markComplete}
