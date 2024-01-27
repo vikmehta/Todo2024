@@ -8,6 +8,7 @@ import Footer from './components/Footer'
 import Modal from './components/Modal'
 import AddTask from './components/AddTask'
 import sound from './data/applause.mp3'
+import NoResults from './components/NoResults'
 
 const App = () => {
 	const [tasks, setTasks] = useState([])
@@ -87,12 +88,17 @@ const App = () => {
 		<div className='max-w-lg m-auto flex flex-col min-h-screen pt-28'>
 			<AppHeader percent={percent} />
 			{showConfetti && <Confetti />}
-			<TodoList
-				tasks={tasks}
-				markComplete={markComplete}
-				deleteTask={deleteTask}
-				className="flex-1"
-			/>
+			{tasks.length <= 0 && (
+				<NoResults handleShowModal={handleShowModal} className="flex-1" />
+			)}
+			{tasks.length > 0 && (
+				<TodoList
+					tasks={tasks}
+					markComplete={markComplete}
+					deleteTask={deleteTask}
+					className="flex-1"
+				/>
+			)}
 			<Footer
 				totalTasks={totalTasks}
 				totalCompletedTasks={totalCompletedTasks}
