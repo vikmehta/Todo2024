@@ -12,6 +12,7 @@ import NoResults from './components/NoResults'
 
 const App = () => {
 	const [tasks, setTasks] = useState([])
+	const [taskBeingEdited, setTaskBeingEdited] = useState(null)
 	const [showModal, setShowModal] = useState(false)
 	const [textInput, setTextInput] = useState('')
 	const [inputChecked, setInputChecked] = useState(false)
@@ -55,6 +56,14 @@ const App = () => {
 		setTasks(updatedTasks)
 	}
 
+	const updateTask = (task) => {
+		const { id, completed, text } = task
+		setTaskBeingEdited(id)
+		setTextInput(text)
+		setInputChecked(completed)
+		setShowModal(true)
+	}
+
 	const deleteTask = (id) => {
 		const updatedTasks = tasks.filter((item) => item.id !== id)
 		setTasks(updatedTasks)
@@ -66,6 +75,7 @@ const App = () => {
 
 	const handleCloseModal = () => {
 		setShowModal(false)
+		setTaskBeingEdited(null)
 	}
 
 	const handleInputChange = (e) => {
@@ -78,7 +88,7 @@ const App = () => {
 
 	const handleFormSubmit = (e) => {
 		e.preventDefault()
-		setTasks([{ id: nanoid(), text: textInput, completed: inputChecked }, ...tasks])
+		!taskBeingEdited ? setTasks([{ id: nanoid(), text: textInput, completed: inputChecked }, ...tasks]) : setTasks(tasks.map((item) => item.id === taskBeingEdited ? { id: taskBeingEdited, text: textInput, completed: inputChecked } : item))
 		setTextInput('')
 		setInputChecked(false)
 		setShowModal(false)
@@ -96,6 +106,7 @@ const App = () => {
 					tasks={tasks}
 					markComplete={markComplete}
 					deleteTask={deleteTask}
+					updateTask={updateTask}
 					className="flex-1"
 				/>
 			)}
@@ -109,9 +120,11 @@ const App = () => {
 				<Modal handleCloseModal={handleCloseModal}>
 					<AddTask
 						textInput={textInput}
+						inputChecked={inputChecked}
 						handleInputChange={handleInputChange}
 						handleFormSubmit={handleFormSubmit}
 						handleCheckbox={handleCheckbox}
+						editMode={taskBeingEdited ? true : false}
 					/>
 				</Modal>
 			)}
