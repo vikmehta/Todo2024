@@ -91,6 +91,7 @@ const App = () => {
 		!taskBeingEdited ? setTasks([{ id: nanoid(), text: textInput, completed: inputChecked }, ...tasks]) : setTasks(tasks.map((item) => item.id === taskBeingEdited ? { id: taskBeingEdited, text: textInput, completed: inputChecked } : item))
 		setTextInput('')
 		setInputChecked(false)
+		setTaskBeingEdited(null)
 		setShowModal(false)
 	}
 
